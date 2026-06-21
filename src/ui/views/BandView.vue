@@ -71,6 +71,21 @@ function handleAddPlayer() {
   }
 }
 
+function getMemberStats(id: string): Record<string, number> {
+  if (id === 'player') return player.state.stats
+  return registries.npcs.get(id)?.stats ?? {}
+}
+
+const bandScore = computed(() => {
+  const members = band.band.members
+  if (members.length === 0) return 0
+  const totalScore = members.reduce((sum, m) => sum + (s => ((s.expression ?? 0) + (s.technique ?? 0) + (s.rhythm ?? 0) + (s.pitch ?? 0) + (s.ensemble ?? 0) + (s.improvisation ?? 0)) / 6 * (1 + (s[m.instrument] ?? 0) / 200) * (1 + (m.role === 'lead' ? ((s.technique ?? 0) + (s.expression ?? 0)) / 400 : ((s.rhythm ?? 0) + (s.ensemble ?? 0)) / 400)))(getMemberStats(m.id)), 0)
+  const npcMembers = members.filter(m => m.id !== 'player')
+  return totalScore * (1 + (npcMembers.length === 0 ? 0 : npcMembers.reduce((sum, m) => sum + (player.state.relationships[m.id]?.affection ?? 0), 0) / (npcMembers.length * 200)))
+})
+
+const bandRank = computed(() => ['G', 'G+', 'F', 'F+', 'E', 'E+', 'D', 'D+', 'C', 'C+', 'B', 'B+', 'A', 'A+', 'S', 'S+', 'SS', 'SS+', 'SSS', 'SSS+'][Math.min(19, Math.floor(bandScore.value * 19 / 2000))] ?? 'G')
+
 function handleRemoveMember(npcId: string) {
   ui.showConfirm({
     title: '移除成员',
@@ -86,9 +101,9 @@ function handleRemoveMember(npcId: string) {
 <template>
   <div class="h-full overflow-y-auto bg-neutral-50">
     <div class="max-w-12xl mx-auto p-6 flex flex-col gap-6">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <img :src="`${base}icons/microphone.svg`" alt="乐队" class="w-5 h-5"/>
+      <div class="rounded-xl border border-neutral-200 bg-white p-3">
+        <div class="flex items-center gap-2">
+          <img :src="`${base}icons/microphone.svg`" alt="乐队" class="w-4 h-4"/>
           <div v-if="!editingName" class="flex items-center gap-2">
             <h1 class="text-lg font-bold">{{ bandName }}</h1>
             <button
@@ -97,6 +112,7 @@ function handleRemoveMember(npcId: string) {
             >
               <img :src="`${base}icons/edit.svg`" alt="编辑" class="w-3.5 h-3.5"/>
             </button>
+            <span :title="`${Math.round(bandScore)}`" class="text-lg font-black text-brand-pink">{{ bandRank }}</span>
           </div>
           <div v-else class="flex items-center gap-2">
             <input
