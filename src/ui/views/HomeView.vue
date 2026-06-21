@@ -1,0 +1,346 @@
+<script lang="ts" setup>
+import {computed, onMounted, ref, watch} from 'vue'
+import {useRouter} from 'vue-router'
+import {usePlayerStore} from '@/stores/player'
+import {useSaveStore} from '@/stores/save'
+import {useModsStore} from '@/stores/mods'
+import {useWorldStore} from '@/stores/world'
+import {useSettingsStore} from '@/stores/settings'
+import {useUIStore} from '@/stores/ui'
+import {GAME_VERSION} from '@/stores/save-types'
+import {formatTime, getTimeInfo} from '@/core/time'
+import {MINUTES_PER_DAY} from '@/core/constants'
+import InstallModal from '@/ui/components/modals/InstallModal.vue'
+import CharacterSprite from '@/ui/components/CharacterSprite.vue'
+import AppearancePicker from '@/ui/components/AppearancePicker.vue'
+import {DEFAULT_APPEARANCE, PARTS} from '@/stores/appearance'
+import type {AppearanceState} from '@/core/types'
+
+const router = useRouter()
+const player = usePlayerStore()
+const save = useSaveStore()
+const mods = useModsStore()
+const world = useWorldStore()
+const settings = useSettingsStore()
+const ui = useUIStore()
+
+const tab = ref<'start' | 'saves' | 'mods'>('start')
+
+const playerName = ref('')
+const draftSchool = ref('school.haneoka')
+const draftAppearance = ref<AppearanceState>(JSON.parse(JSON.stringify(DEFAULT_APPEARANCE)))
+
+const creationParts = computed(() => PARTS.filter(p => p.id === 'eyes' || p.id === 'hair'))
+
+watch(draftSchool, (school) => {
+  draftAppearance.value.clothing = {
+    style: {
+      'school.haneoka': '01',
+      'school.hanasakigawa': '02',
+      'school.tsukinomori': '03',
+    }[school] ?? '',
+    color: ''
+  }
+})
+
+const urlInput = ref('')
+const fileInput = ref<HTMLInputElement | null>(null)
+
+const showSponsor = ref(false)
+
+const base = import.meta.env.BASE_URL
+
+onMounted(async () => {
+  await save.refresh()
+  await mods.refresh()
+})
+
+const slots = computed(() =>
+  [...save.slots].sort((a, b) => a.slot - b.slot)
+)
+
+function formatSaveDate(ts: number): string {
+  return new Date(ts).toLocaleString('zh-CN', {
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  })
+}
+
+async function newGame() {
+  player.state.name = playerName.value.trim()
+  player.state.appearance = JSON.parse(JSON.stringify(draftAppearance.value))
+  player.state.school = draftSchool.value
+  if (settings.settings.autoSave) {
+    await save.autoSave()
+    ui.showToast('已自动存档', 'success')
+  }
+  router.push('/game')
+}
+
+async function loadSlot(slot: number) {
+  await save.loadFromSlot(slot)
+  if (!save.error) await router.push('/game')
+}
+
+async function onFileChange(event: Event) {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  await mods.installZip(file)
+  if (fileInput.value) fileInput.value.value = ''
+}
+
+async function onUrlInstall() {
+  if (!urlInput.value.trim()) return
+  await mods.installUrl(urlInput.value.trim())
+  urlInput.value = ''
+}
+</script>
+
+<template>
+  <main class="min-h-full flex items-center justify-center px-4 py-12">
+    <section class="w-full max-w-lg">
+
+      <header class="text-center mb-8">
+        <h1 class="text-3xl font-bold tracking-tight mb-1">BanGLife</h1>
+        <p class="text-sm text-muted">乐队少女模拟器</p>
+      </header>
+
+      <div class="flex rounded-xl border border-neutral-200 bg-white overflow-hidden mb-4">
+        <button
+          v-for="t in [{ id: 'start', label: '开始' }, { id: 'saves', label: '存档' }, { id: 'mods', label: 'Mod' }]"
+          :key="t.id"
+          :class="tab === t.id
+            ? 'bg-neutral-50 text-brand-pink font-semibold border-b-2 border-brand-pink'
+            : 'text-muted hover:text-neutral-700'"
+          class="flex-1 text-sm py-3 transition-colors"
+          @click="tab = t.id as 'start' | 'saves' | 'mods'"
+        >
+          {{ t.label }}
+        </button>
+      </div>
+
+      <div v-if="tab === 'start'" class="flex flex-col gap-3">
+
+        <div class="rounded-2xl bg-white border border-neutral-200 p-5">
+          <h2 class="text-sm font-semibold mb-3">创建角色</h2>
+          <div class="flex flex-col sm:flex-row gap-4 mb-4">
+            <div class="shrink-0 flex items-center justify-center sm:justify-start pt-1">
+              <CharacterSprite :appearance="draftAppearance" :height="171" :width="128"/>
+            </div>
+            <div class="flex-1 flex flex-col gap-3">
+              <input
+                v-model="playerName"
+                class="text-sm border border-neutral-200 rounded-xl px-3 py-2 focus:outline-none focus:border-brand-pink"
+                maxlength="12"
+                placeholder="输入角色名称"
+                type="text"
+                @keydown.enter="newGame"
+              />
+              <AppearancePicker
+                v-for="p in creationParts"
+                :key="p.id"
+                v-model="draftAppearance[p.id]"
+                :part="p"
+              />
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="grid grid-cols-3 gap-2">
+              <button
+                v-for="s in [
+                  {id: 'school.haneoka', name: '羽丘女子学园'},
+                  {id: 'school.tsukinomori', name: '月之森女子学园'},
+                  {id: 'school.hanasakigawa', name: '花咲川女子学园'},
+                ]"
+                :key="s.id"
+                :class="draftSchool === s.id
+                  ? 'border-brand-pink bg-pink-50 text-brand-pink font-medium'
+                  : 'border-neutral-200 text-neutral-500 hover:border-neutral-300'"
+                class="text-xs py-2 rounded-xl border transition-colors"
+                @click="draftSchool = s.id"
+              >
+                {{ s.name }}
+              </button>
+            </div>
+          </div>
+
+          <button
+            :disabled="!playerName.trim()"
+            class="w-full py-2.5 rounded-xl text-sm font-semibold text-white transition-opacity disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90"
+            style="background: linear-gradient(135deg, var(--color-brand-pink), var(--color-brand-purple))"
+            @click="newGame"
+          >
+            开始新游戏
+          </button>
+        </div>
+
+        <div class="flex gap-3">
+          <a
+            class="flex-1 py-2.5 rounded-xl text-sm font-semibold border border-neutral-200 bg-white hover:border-brand-pink hover:bg-pink-50/50 transition-all flex items-center justify-center gap-2"
+            href="https://github.com/CPJiNan/BanGLife"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <img :src="`${base}icons/github.svg`" alt="Github" class="w-4 h-4"/>
+            Github
+          </a>
+          <a
+            class="flex-1 py-2.5 rounded-xl text-sm font-semibold border border-neutral-200 bg-white hover:border-brand-pink hover:bg-pink-50/50 transition-all flex items-center justify-center gap-2"
+            href="https://qm.qq.com/q/GGV0qPOkMM"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <img :src="`${base}icons/qq.svg`" alt="QQ群" class="w-4 h-4"/>
+            QQ群
+          </a>
+          <button
+            class="flex-1 py-2.5 rounded-xl text-sm font-semibold border border-neutral-200 bg-white hover:border-brand-pink hover:bg-pink-50/50 transition-all flex items-center justify-center gap-2"
+            @click="showSponsor = true"
+          >
+            <img :src="`${base}icons/coffee.svg`" alt="赞助" class="w-4 h-4"/>
+            赞助
+          </button>
+        </div>
+
+      </div>
+
+      <div v-else-if="tab === 'saves'" class="flex flex-col gap-3">
+        <div v-if="save.error" class="text-xs text-red-500 bg-red-50 rounded-xl px-3 py-2">
+          {{ save.error }}
+        </div>
+
+        <div
+          v-for="slot in slots"
+          :key="slot.slot"
+          class="rounded-2xl bg-white border border-neutral-200 p-4"
+        >
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-muted font-medium">{{ slot.label }}</span>
+            <span class="text-xs text-neutral-400">{{ formatSaveDate(slot.savedAt) }}</span>
+          </div>
+          <div v-if="slot.data" class="text-xs mb-3">第 {{ Math.floor(slot.preview.gameTime / MINUTES_PER_DAY) + 1 }} 天
+            {{ formatTime(getTimeInfo(slot.preview.gameTime)) }} ·
+            {{ world.getLocation(slot.preview.locationId)?.name ?? slot.preview.locationId }}
+          </div>
+          <div v-else class="text-xs text-neutral-400 mb-3">空槽位</div>
+          <button
+            v-if="slot.data"
+            :disabled="save.busy"
+            class="w-full py-1.5 text-xs rounded-lg border border-neutral-200 hover:border-brand-pink transition-colors"
+            @click="loadSlot(slot.slot)"
+          >
+            读取并继续
+          </button>
+          <div v-else class="text-xs text-neutral-300 text-center py-1.5">—</div>
+        </div>
+      </div>
+
+      <div v-else class="flex flex-col gap-3">
+        <div v-if="mods.error" class="text-xs text-red-500 bg-red-50 rounded-xl px-3 py-2">
+          {{ mods.error }}
+        </div>
+
+        <div class="rounded-2xl bg-white border border-neutral-200 p-4 flex flex-col gap-2">
+          <div class="text-xs text-muted font-medium">安装 Mod</div>
+          <label
+            class="flex items-center justify-center gap-2 text-xs py-2 rounded-xl border border-dashed border-neutral-300 hover:border-brand-pink cursor-pointer transition-colors">
+            <span>上传 ZIP 文件</span>
+            <input ref="fileInput" :disabled="mods.busy" accept=".zip" class="hidden" type="file"
+                   @change="onFileChange"/>
+          </label>
+          <div class="flex gap-1.5">
+            <input
+              v-model="urlInput"
+              :disabled="mods.busy"
+              class="flex-1 text-xs border border-neutral-200 rounded-xl px-3 py-1.5 focus:outline-none focus:border-brand-pink"
+              placeholder="粘贴 ZIP URL..."
+              type="url"
+              @keydown.enter="onUrlInstall"
+            />
+            <button
+              :disabled="mods.busy"
+              class="text-xs px-3 py-1.5 rounded-xl border border-neutral-200 hover:border-brand-pink transition-colors"
+              @click="onUrlInstall"
+            >
+              导入
+            </button>
+          </div>
+        </div>
+
+        <div v-if="mods.installed.length === 0" class="text-xs text-neutral-400 text-center py-6">
+          暂无已安装的用户 Mod
+        </div>
+        <div
+          v-for="mod in mods.installed"
+          :key="mod.id"
+          class="rounded-2xl bg-white border border-neutral-200 p-4"
+        >
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="text-sm font-medium">{{ mod.name }}</div>
+              <div class="text-xs text-muted mt-0.5">{{ mod.id }} · v{{ mod.version }}</div>
+              <div v-if="mod.description" class="text-xs text-muted mt-1">{{ mod.description }}</div>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0 ml-3">
+              <button
+                :class="mods.isEnabled(mod.id) ? 'bg-pink-100 text-pink-700' : 'bg-neutral-100 text-neutral-500'"
+                :disabled="mods.busy"
+                class="text-xs px-2 py-0.5 rounded-full transition-colors"
+                @click="mods.toggleEnabled(mod.id)"
+              >
+                {{ mods.isEnabled(mod.id) ? '已启用' : '已禁用' }}
+              </button>
+              <button
+                :disabled="mods.busy"
+                class="text-xs px-2 py-0.5 rounded-full border border-red-100 texd-400 hover:border-red-300 transition-colors"
+                @click="mods.remove(mod.id)"
+              >
+                删除
+              </button>
+            </div>
+          </div>
+          <div v-if="mods.isEnabled(mod.id)" class="mt-2 text-xs text-green-600">● 运行中</div>
+        </div>
+      </div>
+      <InstallModal/>
+
+      <Transition>
+        <div
+          v-if="showSponsor"
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 transition-opacity duration-200"
+          @click="showSponsor = false"
+        >
+          <div
+            class="w-full max-w-sm rounded-2xl bg-white shadow-xl p-6"
+            @click.stop
+          >
+            <h3 class="text-base font-bold mb-4 text-center">赞助</h3>
+            <div class="flex justify-center mb-4">
+              <img
+                :src="`${base}sponsor.png`"
+                alt="赞助"
+                class="w-full max-w-xs rounded-xl"/>
+            </div>
+            <p class="text-xs text-muted text-center mb-4">
+              感谢您的支持！
+            </p>
+            <button
+              class="w-full py-2 rounded-xl text-sm font-semibold border border-neutral-200 hover:border-neutral-400 transition-colors"
+              @click="showSponsor = false"
+            >
+              关闭
+            </button>
+          </div>
+        </div>
+      </Transition>
+
+      <footer class="mt-8 text-center text-xs text-muted">
+        v{{ GAME_VERSION }} · BanGLife
+      </footer>
+    </section>
+  </main>
+</template>

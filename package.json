@@ -1,0 +1,74 @@
+{
+  "name": "banglife",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist-electron/main.js",
+  "description": "BanGLife · 乐队少女模拟器",
+  "author": "BanGLife",
+  "scripts": {
+    "dev": "vite",
+    "dev:electron": "vite --mode electron",
+    "build": "vue-tsc --noEmit && vite build",
+    "build:electron": "vue-tsc --noEmit && vite build --mode electron && electron-builder --publish never",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@vue-flow/core": "^1.48.2",
+    "idb-keyval": "^6.2.2",
+    "jszip": "^3.10.1",
+    "lz-string": "^1.5.0",
+    "pinia": "^3.0.4",
+    "vue": "^3.5.34",
+    "vue-router": "^5.0.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.0",
+    "@tsconfig/node24": "^24.0.4",
+    "@types/node": "^25.8.0",
+    "@vitejs/plugin-vue": "^6.0.7",
+    "@vue/tsconfig": "^0.9.1",
+    "electron": "^42.4.1",
+    "electron-builder": "^26.15.3",
+    "postcss": "^8.5.14",
+    "tailwindcss": "^4.3.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.13",
+    "vite-plugin-electron": "^1.0.4",
+    "vite-plugin-electron-renderer": "^1.0.0",
+    "vue-tsc": "^3.2.9"
+  },
+  "build": {
+    "appId": "com.banglife.app",
+    "productName": "BanGLife",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*"
+    ],
+    "win": {
+      "target": [
+        "zip"
+      ],
+      "icon": "public/favicon.png"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "public/favicon.png"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "icon": "public/favicon.png"
+    }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
