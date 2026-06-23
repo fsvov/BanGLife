@@ -244,6 +244,30 @@ export interface Task {
   onExpire?: (ctx: GameContext) => void
 }
 
+export interface PerformanceStrategy {
+  id: string
+  name: string
+  description: string
+  category: 'standard' | 'advanced'
+  available: (ctx: StrategyContext) => boolean
+  resolve: (ctx: StrategyContext) => StrategyResult
+}
+
+export interface StrategyContext {
+  member: BandMember
+  memberStats: Record<string, number>
+  currentRound: number
+  maxRounds: number
+  currentFever: number
+  bandMembers: BandMember[]
+}
+
+export interface StrategyResult {
+  score: number
+  fever: number
+  description?: string
+}
+
 export interface ModManifest {
   id: string
   name: string
@@ -279,6 +303,8 @@ export interface ModAPI {
   registerPassage(passage: Passage): void
 
   registerTask(task: Task): void
+
+  registerStrategy(strategy: PerformanceStrategy): void
 
   on(event: string, handler: (...args: unknown[]) => void): () => void
 

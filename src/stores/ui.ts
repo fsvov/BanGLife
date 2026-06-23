@@ -32,6 +32,7 @@ export const useUIStore = defineStore('ui', () => {
   const activeMap = ref<boolean>(false)
   const activeNPCId = ref<string | null>(null)
   const activeBand = ref<boolean>(false)
+  const activePerformance = ref<boolean>(false)
 
   function showPassage(passage: ActivePassage): void {
     activeNPCId.value = null
@@ -108,6 +109,14 @@ export const useUIStore = defineStore('ui', () => {
     activeBand.value = false
   }
 
+  function openPerformance(): void {
+    activePerformance.value = true
+  }
+
+  function closePerformance(): void {
+    activePerformance.value = false
+  }
+
   return {
     activePassage,
     activeShopId,
@@ -117,6 +126,7 @@ export const useUIStore = defineStore('ui', () => {
     activeMap,
     activeNPCId,
     activeBand,
+    activePerformance,
     showPassage,
     dismissPassage,
     openShop,
@@ -133,5 +143,7 @@ export const useUIStore = defineStore('ui', () => {
     closeNPC,
     openBand,
     closeBand,
+    openPerformance,
+    closePerformance,
   }
 })

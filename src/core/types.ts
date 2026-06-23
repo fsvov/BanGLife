@@ -8,10 +8,13 @@ import type {
   NPC,
   NPCSchedule,
   Passage,
+  PerformanceStrategy,
   Period,
   Shop,
   ShopItem,
   StatDef,
+  StrategyContext,
+  StrategyResult,
   Target,
   Task,
 } from '@banglife/mod-types'
@@ -31,7 +34,10 @@ export type {
   NPCSchedule,
   Passage,
   Target,
-  Task
+  Task,
+  PerformanceStrategy,
+  StrategyContext,
+  StrategyResult,
 }
 export type {
   PlayerState, InventoryItem, Relationship, GameContext, AppearanceState, PartSelection, Band

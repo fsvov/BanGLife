@@ -8,6 +8,7 @@ import type {
   ModManifest,
   NPC,
   Passage,
+  PerformanceStrategy,
   Shop,
   ShopItem,
   StatDef,
@@ -91,6 +92,7 @@ export function createModAPI(manifest: ModManifest): ModAPI {
       registerNPC: (npc: NPC) => reg('npcs', npc),
       registerPassage: (passage: Passage) => reg('passages', passage),
       registerTask: (task: Task) => reg('tasks', task),
+      registerStrategy: (strategy: PerformanceStrategy) => reg('strategies', strategy),
 
       on(event: string, handler: (...args: unknown[]) => void) {
         const unsub = eventBus.on(event, handler)

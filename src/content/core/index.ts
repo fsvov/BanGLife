@@ -1,4 +1,4 @@
-import type {ModDefinition, ModManifest} from '@banglife/mod-types'
+import type {ModDefinition, ModManifest, PerformanceStrategy} from '@banglife/mod-types'
 import type {Action, GameLocation, Item, NPC, Passage, Shop, StatDef, Task} from '@/core/types'
 import {GAME_VERSION} from '@/stores/save-types'
 import {schoolActions, schoolLocations, schoolPassages} from './locations/school.ts'
@@ -43,6 +43,7 @@ import {tomori} from './npcs/tomori.ts'
 import {taki} from './npcs/taki.ts'
 import {rana} from './npcs/rana.ts'
 import {soyo} from './npcs/soyo.ts'
+import {defaultStrategies} from './strategies/default.ts'
 
 const manifest: ModManifest = {
   id: 'banglife.core',
@@ -203,6 +204,10 @@ const tasks: Task[] = [
   ...hanasawaCafeTasks,
 ]
 
+const strategies: PerformanceStrategy[] = [
+  ...defaultStrategies,
+]
+
 const definition: ModDefinition = {
   async onLoad(api) {
     for (const stat of stats) api.registerStat(stat)
@@ -213,6 +218,7 @@ const definition: ModDefinition = {
     for (const item of items) api.registerItem(item)
     for (const shop of shops) api.registerShop(shop)
     for (const task of tasks) api.registerTask(task)
+    for (const strategy of strategies) api.registerStrategy(strategy)
   },
 }
 

@@ -8,6 +8,7 @@ import SceneView from '@/ui/views/SceneView.vue'
 import ShopView from '@/ui/views/ShopView.vue'
 import AppearanceView from '@/ui/views/AppearanceView.vue'
 import BandView from '@/ui/views/BandView.vue'
+import PerformanceView from '@/ui/views/PerformanceView.vue'
 import {useUIStore} from '@/stores/ui'
 import {useTasksStore} from '@/stores/tasks'
 import {useSaveStore} from '@/stores/save'
@@ -155,6 +156,7 @@ function toggleMobilePanel(id: PanelId) {
     <div class="flex-1 overflow-hidden bg-neutral-50">
       <AppearanceView v-if="ui.activeWardrobe"/>
       <ShopView v-else-if="ui.activeShopId"/>
+      <PerformanceView v-else-if="ui.activePerformance"/>
       <BandView v-else-if="ui.activeBand"/>
       <SceneView v-else/>
     </div>
@@ -177,6 +179,7 @@ function toggleMobilePanel(id: PanelId) {
     <div class="flex-1 overflow-hidden bg-neutral-50">
       <AppearanceView v-if="ui.activeWardrobe"/>
       <ShopView v-else-if="ui.activeShopId"/>
+      <PerformanceView v-else-if="ui.activePerformance"/>
       <BandView v-else-if="ui.activeBand"/>
       <SceneView v-else/>
     </div>
