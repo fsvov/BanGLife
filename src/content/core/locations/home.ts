@@ -1,5 +1,7 @@
 import type {Action, GameLocation, Passage} from '@/core/types.ts'
 import {useUIStore} from '@/stores/ui.ts'
+import {registries} from '@/core/registry'
+import {applyEffects} from '@/core/effects'
 
 export const homeLocations: GameLocation[] = [
   {
@@ -98,6 +100,166 @@ export const homeActions: Action[] = [
       useUIStore().openWardrobe()
     },
   },
+  {
+    id: 'bedroom.practice_singing',
+    label: '练习演唱',
+    icon: 'staff.svg',
+    duration: 120,
+    tag: 'practice',
+    locationId: 'home.bedroom',
+    description: (ctx) => {
+      if ((ctx.player.stats.fatigue ?? 0) >= 50) return '无法练习：疲劳 ≥ 50'
+      return ''
+    },
+    visible: () => true,
+    available: (ctx) => (ctx.player.stats.fatigue ?? 0) < 50,
+    passage: 'bedroom.practice_singing',
+    effects: [
+      {type: 'stat', key: 'vocal', value: 5},
+      {type: 'stat', key: 'fatigue', value: 20},
+      {type: 'stat', key: 'stress', value: 10},
+    ],
+  },
+  {
+    id: 'bedroom.practice_guitar',
+    label: '练习吉他',
+    icon: 'staff.svg',
+    duration: 120,
+    tag: 'practice',
+    locationId: 'home.bedroom',
+    description: (ctx) => {
+      if ((ctx.player.stats.fatigue ?? 0) >= 50) return '无法练习：疲劳 ≥ 50'
+      return ''
+    },
+    visible: (ctx) => ctx.player.inventory.some(i => registries.items.get(i.itemId)?.tags?.includes('guitar') ?? false),
+    available: (ctx) => (ctx.player.stats.fatigue ?? 0) < 50 && ctx.player.inventory.some(i => registries.items.get(i.itemId)?.tags?.includes('guitar') ?? false),
+    passage: 'bedroom.practice_guitar',
+    execute: (ctx) => {
+      const levels = [
+        {id: 'instrument.guitar.bgl_master_ex', value: 10},
+        {id: 'instrument.guitar.bgl_performer_x', value: 7},
+        {id: 'instrument.guitar.bgl_rock_v', value: 5},
+        {id: 'instrument.guitar.bgl_stage_20', value: 3},
+        {id: 'instrument.guitar.bgl_starter_10', value: 2},
+        {id: 'instrument.guitar.st_100', value: 1},
+      ]
+      for (const level of levels) {
+        if (ctx.player.inventory.some(i => i.itemId === level.id)) {
+          applyEffects([
+            {type: 'stat', key: 'guitar', value: level.value},
+            {type: 'stat', key: 'fatigue', value: 20},
+            {type: 'stat', key: 'stress', value: 10},
+          ])
+          return
+        }
+      }
+    },
+  },
+  {
+    id: 'bedroom.practice_keyboard',
+    label: '练习键盘',
+    icon: 'staff.svg',
+    duration: 120,
+    tag: 'practice',
+    locationId: 'home.bedroom',
+    description: (ctx) => {
+      if ((ctx.player.stats.fatigue ?? 0) >= 50) return '无法练习：疲劳 ≥ 50'
+      return ''
+    },
+    visible: (ctx) => ctx.player.inventory.some(i => registries.items.get(i.itemId)?.tags?.includes('keyboard') ?? false),
+    available: (ctx) => (ctx.player.stats.fatigue ?? 0) < 50 && ctx.player.inventory.some(i => registries.items.get(i.itemId)?.tags?.includes('keyboard') ?? false),
+    passage: 'bedroom.practice_keyboard',
+    execute: (ctx) => {
+      const levels = [
+        {id: 'instrument.keyboard.bgl_ultimate_880', value: 10},
+        {id: 'instrument.keyboard.bgl_apex_760', value: 7},
+        {id: 'instrument.keyboard.bgl_vanguard_490', value: 5},
+        {id: 'instrument.keyboard.bgl_fusion_610', value: 3},
+        {id: 'instrument.keyboard.bgl_neo_610', value: 2},
+        {id: 'instrument.keyboard.p_61', value: 1},
+      ]
+      for (const level of levels) {
+        if (ctx.player.inventory.some(i => i.itemId === level.id)) {
+          applyEffects([
+            {type: 'stat', key: 'keyboard', value: level.value},
+            {type: 'stat', key: 'fatigue', value: 20},
+            {type: 'stat', key: 'stress', value: 10},
+          ])
+          return
+        }
+      }
+    },
+  },
+  {
+    id: 'bedroom.practice_bass',
+    label: '练习贝斯',
+    icon: 'staff.svg',
+    duration: 120,
+    tag: 'practice',
+    locationId: 'home.bedroom',
+    description: (ctx) => {
+      if ((ctx.player.stats.fatigue ?? 0) >= 50) return '无法练习：疲劳 ≥ 50'
+      return ''
+    },
+    visible: (ctx) => ctx.player.inventory.some(i => registries.items.get(i.itemId)?.tags?.includes('bass') ?? false),
+    available: (ctx) => (ctx.player.stats.fatigue ?? 0) < 50 && ctx.player.inventory.some(i => registries.items.get(i.itemId)?.tags?.includes('bass') ?? false),
+    passage: 'bedroom.practice_bass',
+    execute: (ctx) => {
+      const levels = [
+        {id: 'instrument.bass.bgl_maestro_b5', value: 10},
+        {id: 'instrument.bass.bgl_virtuoso_b4', value: 7},
+        {id: 'instrument.bass.bgl_groove_b4', value: 5},
+        {id: 'instrument.bass.bgl_core_b4', value: 3},
+        {id: 'instrument.bass.bgl_base_b4', value: 2},
+        {id: 'instrument.bass.pb_100', value: 1},
+      ]
+      for (const level of levels) {
+        if (ctx.player.inventory.some(i => i.itemId === level.id)) {
+          applyEffects([
+            {type: 'stat', key: 'bass', value: level.value},
+            {type: 'stat', key: 'fatigue', value: 20},
+            {type: 'stat', key: 'stress', value: 10},
+          ])
+          return
+        }
+      }
+    },
+  },
+  {
+    id: 'bedroom.practice_drum',
+    label: '练习鼓',
+    icon: 'staff.svg',
+    duration: 120,
+    tag: 'practice',
+    locationId: 'home.bedroom',
+    description: (ctx) => {
+      if ((ctx.player.stats.fatigue ?? 0) >= 50) return '无法练习：疲劳 ≥ 50'
+      return ''
+    },
+    visible: (ctx) => ctx.player.inventory.some(i => registries.items.get(i.itemId)?.tags?.includes('drum') ?? false),
+    available: (ctx) => (ctx.player.stats.fatigue ?? 0) < 50 && ctx.player.inventory.some(i => registries.items.get(i.itemId)?.tags?.includes('drum') ?? false),
+    passage: 'bedroom.practice_drum',
+    execute: (ctx) => {
+      const levels = [
+        {id: 'instrument.drum.bgl_summit_d5', value: 10},
+        {id: 'instrument.drum.bgl_elite_d5', value: 7},
+        {id: 'instrument.drum.bgl_advanced_d5', value: 5},
+        {id: 'instrument.drum.bgl_standard_d5', value: 3},
+        {id: 'instrument.drum.bgl_entry_d5', value: 2},
+        {id: 'instrument.drum.e_65', value: 1},
+      ]
+      for (const level of levels) {
+        if (ctx.player.inventory.some(i => i.itemId === level.id)) {
+          applyEffects([
+            {type: 'stat', key: 'drum', value: level.value},
+            {type: 'stat', key: 'fatigue', value: 20},
+            {type: 'stat', key: 'stress', value: 10},
+          ])
+          return
+        }
+      }
+    },
+  },
 ]
 
 export const homePassages: Passage[] = [
@@ -123,5 +285,25 @@ export const homePassages: Passage[] = [
   {
     id: 'bathroom.brush_teeth',
     text: '你认真地刷着牙，每一颗牙齿都变得干干净净。压力 -5。',
+  },
+  {
+    id: 'bedroom.practice_singing',
+    text: '你练习了演唱。演唱技能提升，疲劳 +20，压力 +10。',
+  },
+  {
+    id: 'bedroom.practice_guitar',
+    text: '你练习了吉他。吉他技能提升，疲劳 +20，压力 +10。',
+  },
+  {
+    id: 'bedroom.practice_keyboard',
+    text: '你练习了键盘。键盘技能提升，疲劳 +20，压力 +10。',
+  },
+  {
+    id: 'bedroom.practice_bass',
+    text: '你练习了贝斯。贝斯技能提升，疲劳 +20，压力 +10。',
+  },
+  {
+    id: 'bedroom.practice_drum',
+    text: '你练习了鼓。鼓技能提升，疲劳 +20，压力 +10。',
   },
 ]

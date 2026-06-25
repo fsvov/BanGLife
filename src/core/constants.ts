@@ -7,6 +7,7 @@ export const ACTION_TAG_LABELS: Record<string, string> = {
   daily: '日常',
   school: '课程',
   job: '打工',
+  practice: '练习',
   social: '社交',
   other: '行动',
 }
