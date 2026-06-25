@@ -248,7 +248,7 @@ export interface PerformanceStrategy {
   id: string
   name: string
   description: string
-  category: 'standard' | 'advanced'
+  category: string
   available: (ctx: StrategyContext) => boolean
   resolve: (ctx: StrategyContext) => StrategyResult
 }
