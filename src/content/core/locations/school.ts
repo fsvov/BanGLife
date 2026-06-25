@@ -10,6 +10,9 @@ export const schoolLocations: GameLocation[] = [
     tags: ['outdoor', 'school'],
     x: 2, y: 1,
     connections: [
+      {to: 'school.hanasakigawa.classroom', duration: 1, label: '去教室', icon: 'book.svg', tag: 'place'},
+      {to: 'school.hanasakigawa.track', duration: 1, label: '去田径场', icon: 'basketball.svg', tag: 'place'},
+      {to: 'school.hanasakigawa.auditorium', duration: 1, label: '去礼堂', icon: 'theater.svg', tag: 'place'},
       {to: 'city.school_street', duration: 5, label: '去学园街', icon: 'street.svg', tag: 'area'},
     ],
   },
@@ -43,12 +46,39 @@ export const schoolLocations: GameLocation[] = [
     ],
   },
   {
+    id: 'school.hanasakigawa.classroom',
+    name: '教室',
+    description: '花咲川女子学园的教室。墙面上贴着“禁止迟到”的告示，窗台上摆有几盆盆栽。',
+    tags: ['indoor', 'school'],
+    connections: [
+      {to: 'school.hanasakigawa', duration: 1, label: '去中庭', icon: 'school.svg', tag: 'place'},
+    ],
+  },
+  {
+    id: 'school.hanasakigawa.track',
+    name: '田径场',
+    description: '花咲川女子学园的田径场。平整的跑道围绕着宽阔的场地，树荫下摆放着几张长椅。',
+    tags: ['outdoor', 'school'],
+    connections: [
+      {to: 'school.hanasakigawa', duration: 1, label: '去中庭', icon: 'school.svg', tag: 'place'},
+    ],
+  },
+  {
+    id: 'school.hanasakigawa.auditorium',
+    name: '礼堂',
+    description: '花咲川女子学园的礼堂。深红色幕布自舞台上方垂落，阶梯式的座位层层向高处延伸。',
+    tags: ['indoor', 'school'],
+    connections: [
+      {to: 'school.hanasakigawa', duration: 1, label: '去中庭', icon: 'school.svg', tag: 'place'},
+    ],
+  },
+  {
     id: 'school.haneoka.classroom',
     name: '教室',
     description: '羽丘女子学园的教室。课桌椅按行列整齐地排开，黑板旁的值日表上写着今日的扫除安排。',
     tags: ['indoor', 'school'],
     connections: [
-      {to: 'school.haneoka', duration: 1, label: '回中庭', icon: 'school.svg', tag: 'place'},
+      {to: 'school.haneoka', duration: 1, label: '去中庭', icon: 'school.svg', tag: 'place'},
     ],
   },
   {
@@ -57,7 +87,7 @@ export const schoolLocations: GameLocation[] = [
     description: '羽丘女子学园的天台。围栏围绕着的开阔平台，可以远眺学园周边的街景。',
     tags: ['outdoor', 'school'],
     connections: [
-      {to: 'school.haneoka', duration: 1, label: '回中庭', icon: 'school.svg', tag: 'place'},
+      {to: 'school.haneoka', duration: 1, label: '去中庭', icon: 'school.svg', tag: 'place'},
     ],
   },
   {
@@ -66,7 +96,7 @@ export const schoolLocations: GameLocation[] = [
     description: '羽丘女子学园的运动场。平整的土质地面上用白线划出跑道，场地中央摆放着排球网。',
     tags: ['outdoor', 'school'],
     connections: [
-      {to: 'school.haneoka', duration: 1, label: '回中庭', icon: 'school.svg', tag: 'place'},
+      {to: 'school.haneoka', duration: 1, label: '去中庭', icon: 'school.svg', tag: 'place'},
     ],
   },
   {
@@ -75,7 +105,7 @@ export const schoolLocations: GameLocation[] = [
     description: '羽丘女子学园的管乐部活动室。靠墙的乐器柜里整齐摆放着长笛与单簧管，房间中央有一架立式钢琴，谱架上散落着合奏谱。',
     tags: ['indoor', 'school'],
     connections: [
-      {to: 'school.haneoka', duration: 1, label: '回中庭', icon: 'school.svg', tag: 'place'},
+      {to: 'school.haneoka', duration: 1, label: '去中庭', icon: 'school.svg', tag: 'place'},
     ],
   },
   {
@@ -84,7 +114,7 @@ export const schoolLocations: GameLocation[] = [
     description: '羽丘女子学园的天文部活动室。靠窗摆放着一台小型望远镜，墙上贴满了海报，角落的书架上堆叠着天文学杂志。',
     tags: ['indoor', 'school'],
     connections: [
-      {to: 'school.haneoka', duration: 1, label: '回中庭', icon: 'school.svg', tag: 'place'},
+      {to: 'school.haneoka', duration: 1, label: '去中庭', icon: 'school.svg', tag: 'place'},
     ],
   },
   {
@@ -93,7 +123,7 @@ export const schoolLocations: GameLocation[] = [
     description: '月之森女子学园的教室。木质桌椅散发着淡淡的清漆味，黑板上写着今日课表。',
     tags: ['indoor', 'school'],
     connections: [
-      {to: 'school.tsukinomori', duration: 1, label: '回中庭', icon: 'school.svg', tag: 'place'},
+      {to: 'school.tsukinomori', duration: 1, label: '去中庭', icon: 'school.svg', tag: 'place'},
     ],
   },
   {
@@ -102,7 +132,7 @@ export const schoolLocations: GameLocation[] = [
     description: '月之森女子学园的体育馆。高挑的穹顶下铺着光洁的木地板，靠墙整齐摆放着体操垫与球具。',
     tags: ['indoor', 'school'],
     connections: [
-      {to: 'school.tsukinomori', duration: 1, label: '回中庭', icon: 'school.svg', tag: 'place'},
+      {to: 'school.tsukinomori', duration: 1, label: '去中庭', icon: 'school.svg', tag: 'place'},
     ],
   },
   {
@@ -111,7 +141,7 @@ export const schoolLocations: GameLocation[] = [
     description: '月之森女子学园的礼堂。舞台上方悬挂着深红色的幕布，吊灯在穹顶下折射出柔和的光芒。',
     tags: ['indoor', 'school'],
     connections: [
-      {to: 'school.tsukinomori', duration: 1, label: '回中庭', icon: 'school.svg', tag: 'place'},
+      {to: 'school.tsukinomori', duration: 1, label: '去中庭', icon: 'school.svg', tag: 'place'},
     ],
   },
   {
@@ -120,7 +150,7 @@ export const schoolLocations: GameLocation[] = [
     description: '月之森女子学园的菜园。整齐的田垄间种着应季蔬菜，角落里搭着攀爬黄瓜的竹架。',
     tags: ['outdoor', 'school'],
     connections: [
-      {to: 'school.tsukinomori', duration: 1, label: '回中庭', icon: 'school.svg', tag: 'place'},
+      {to: 'school.tsukinomori', duration: 1, label: '去中庭', icon: 'school.svg', tag: 'place'},
     ],
   },
 ]
@@ -155,7 +185,7 @@ const lessons: Lesson[] = [
       {type: 'stat', key: 'stress', value: 5},
     ],
     passage: 'school.lesson.academic',
-    locationId: ['school.hanasakigawa', 'school.tsukinomori.classroom', 'school.haneoka.classroom'],
+    locationId: ['school.hanasakigawa.classroom', 'school.tsukinomori.classroom', 'school.haneoka.classroom'],
   },
   {
     id: 'school.lesson.2',
@@ -171,7 +201,7 @@ const lessons: Lesson[] = [
       {type: 'stat', key: 'stress', value: 5},
     ],
     passage: 'school.lesson.academic',
-    locationId: ['school.hanasakigawa', 'school.tsukinomori.classroom', 'school.haneoka.classroom'],
+    locationId: ['school.hanasakigawa.classroom', 'school.tsukinomori.classroom', 'school.haneoka.classroom'],
   },
   {
     id: 'school.lesson.3',
@@ -187,7 +217,7 @@ const lessons: Lesson[] = [
       {type: 'stat', key: 'stress', value: 5},
     ],
     passage: 'school.lesson.academic',
-    locationId: ['school.hanasakigawa', 'school.tsukinomori.classroom', 'school.haneoka.classroom'],
+    locationId: ['school.hanasakigawa.classroom', 'school.tsukinomori.classroom', 'school.haneoka.classroom'],
   },
   {
     id: 'school.lesson.4',
@@ -202,10 +232,10 @@ const lessons: Lesson[] = [
     execute: () => {
       const stats = ['expression', 'pitch', 'technique', 'ensemble', 'rhythm', 'improvisation']
       const stat = stats[Math.floor(Math.random() * stats.length)]
-      applyEffects([{type: 'stat', key: stat, value: 2}])
+      applyEffects([{type: 'stat', key: stat, value: 5}])
     },
     passage: 'school.lesson.music',
-    locationId: ['school.hanasakigawa', 'school.tsukinomori.classroom', 'school.haneoka.classroom'],
+    locationId: ['school.hanasakigawa.classroom', 'school.tsukinomori.classroom', 'school.haneoka.classroom'],
   },
   {
     id: 'school.lesson.5',
@@ -221,7 +251,7 @@ const lessons: Lesson[] = [
       {type: 'stat', key: 'stress', value: -10},
     ],
     passage: 'school.lesson.sports',
-    locationId: ['school.hanasakigawa', 'school.tsukinomori.gym', 'school.haneoka.track'],
+    locationId: ['school.hanasakigawa.track', 'school.tsukinomori.gym', 'school.haneoka.track'],
   },
 ]
 
@@ -282,5 +312,5 @@ export const schoolActions: Action[] = lessons.map(makeAction)
 export const schoolPassages: Passage[] = [
   {id: 'school.lesson.academic', text: '你在课堂上认真听讲，完成了本节课的学习。知识 +3，压力 +5。'},
   {id: 'school.lesson.sports', text: '你完成了体能训练。尽管身体有些疲惫，但精神却放松了许多。疲劳 +5，压力 -10。'},
-  {id: 'school.lesson.music', text: '你进行了乐器练习，乐感有所提升。随机演奏属性 +2。'},
+  {id: 'school.lesson.music', text: '你进行了乐器练习，乐感有所提升。随机演出属性 +5。'},
 ]
