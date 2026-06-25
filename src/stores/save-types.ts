@@ -16,6 +16,7 @@ export interface SaveFile {
     time: number
     player: PlayerState
     tasks: Record<string, { startTime: number; progress: boolean[]; status: string }>
+    stages?: string[]
   }
   ui: {
     seenPassages: string[]

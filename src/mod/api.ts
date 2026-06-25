@@ -11,6 +11,7 @@ import type {
   PerformanceStrategy,
   Shop,
   ShopItem,
+  Stage,
   StatDef,
   Task,
 } from '@banglife/mod-types'
@@ -93,6 +94,7 @@ export function createModAPI(manifest: ModManifest): ModAPI {
       registerPassage: (passage: Passage) => reg('passages', passage),
       registerTask: (task: Task) => reg('tasks', task),
       registerStrategy: (strategy: PerformanceStrategy) => reg('strategies', strategy),
+      registerStage: (stage: Stage) => reg('stages', stage),
 
       on(event: string, handler: (...args: unknown[]) => void) {
         const unsub = eventBus.on(event, handler)

@@ -12,6 +12,7 @@ import type {
   Period,
   Shop,
   ShopItem,
+  Stage,
   StatDef,
   StrategyContext,
   StrategyResult,
@@ -38,6 +39,7 @@ export type {
   PerformanceStrategy,
   StrategyContext,
   StrategyResult,
+  Stage,
 }
 export type {
   PlayerState, InventoryItem, Relationship, GameContext, AppearanceState, PartSelection, Band

@@ -5,6 +5,7 @@ import {buildSaveFile, deleteSlot, exportSave, importSave, listSlots, readSlot, 
 import {getLoadedMods} from '@/mod/api'
 import {usePlayerStore} from './player'
 import {useTasksStore} from './tasks'
+import {useStagesStore} from './stages'
 
 export const useSaveStore = defineStore('save', () => {
   const slots = ref<SaveSlot[]>([])
@@ -34,12 +35,14 @@ export const useSaveStore = defineStore('save', () => {
     try {
       const player = usePlayerStore()
       const tasksStore = useTasksStore()
+      const stagesStore = useStagesStore()
       const saveFile = buildSaveFile(
         player.time,
         player.state,
         buildModData(),
         buildModList(),
         tasksStore.serialize(),
+        stagesStore.serialize(),
       )
       const saveSlot: SaveSlot = {
         slot,
@@ -83,6 +86,7 @@ export const useSaveStore = defineStore('save', () => {
         }
       }
       if (saved.data.state.tasks) useTasksStore().deserialize(saved.data.state.tasks)
+      useStagesStore().deserialize(saved.data.state.stages)
       for (const mod of getLoadedMods()) {
         const modData = saved.data.modData[mod.manifest.id]
         if (modData !== undefined) mod.definition.onDeserialize?.(modData)

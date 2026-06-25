@@ -47,6 +47,7 @@ export interface PlayerState {
   currentLocationId: string
   appearance: AppearanceState
   band: Band
+  liveBoost: number
 }
 
 export interface InventoryItem {
@@ -253,6 +254,17 @@ export interface PerformanceStrategy {
   resolve: (ctx: StrategyContext) => StrategyResult
 }
 
+export interface Stage {
+  id: string
+  name: string
+  description: string
+  targetScore: number
+  maxRounds: number
+  icon?: string
+  requires?: string
+  rewards?: Effect[]
+}
+
 export interface StrategyContext {
   member: BandMember
   memberStats: Record<string, number>
@@ -305,6 +317,8 @@ export interface ModAPI {
   registerTask(task: Task): void
 
   registerStrategy(strategy: PerformanceStrategy): void
+
+  registerStage(stage: Stage): void
 
   on(event: string, handler: (...args: unknown[]) => void): () => void
 

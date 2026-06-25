@@ -27,6 +27,7 @@ export const usePlayerStore = defineStore('player', () => {
       name: '',
       members: [],
     },
+    liveBoost: 3,
   })
 
   const time = ref<number>(START_TIME)
@@ -61,6 +62,14 @@ export const usePlayerStore = defineStore('player', () => {
     return state.value.flags[key]
   }
 
+  function consumeLiveBoost(): void {
+    if (state.value.liveBoost > 0) state.value.liveBoost -= 1
+  }
+
+  function recoverLiveBoost(): void {
+    state.value.liveBoost = Math.min(3, state.value.liveBoost + 3)
+  }
+
   return {
     state,
     time,
@@ -71,5 +80,7 @@ export const usePlayerStore = defineStore('player', () => {
     moveTo,
     setFlag,
     getFlag,
+    consumeLiveBoost,
+    recoverLiveBoost,
   }
 })

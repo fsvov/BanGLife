@@ -45,10 +45,13 @@ watch(() => player.time, () => {
 })
 
 watch(() => getTimeInfo(player.time).day, (newDay, oldDay) => {
-  if (newDay !== oldDay && settings.settings.autoSave) {
-    save.autoSave().then(() => {
-      ui.showToast('已自动存档', 'success')
-    })
+  if (newDay !== oldDay) {
+    if (getTimeInfo(player.time).weekday === 1) player.recoverLiveBoost()
+    if (settings.settings.autoSave) {
+      save.autoSave().then(() => {
+        ui.showToast('已自动存档', 'success')
+      })
+    }
   }
 })
 

@@ -7,6 +7,7 @@ import type {
   Passage,
   PerformanceStrategy,
   Shop,
+  Stage,
   StatDef,
   Task
 } from './types'
@@ -58,4 +59,5 @@ export const registries = {
   passages: new Registry<Passage>(),
   tasks: new Registry<Task>(),
   strategies: new Registry<PerformanceStrategy>(),
+  stages: new Registry<Stage>(),
 }
