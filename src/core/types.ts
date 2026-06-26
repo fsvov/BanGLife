@@ -1,6 +1,7 @@
 import type {
   Action,
   Connection,
+  Effect,
   GameEvent,
   GameLocation,
   GameTime,
@@ -18,6 +19,7 @@ import type {
   StrategyResult,
   Target,
   Task,
+  Trait,
 } from '@banglife/mod-types'
 
 export type {
@@ -40,6 +42,8 @@ export type {
   StrategyContext,
   StrategyResult,
   Stage,
+  Trait,
+  Effect,
 }
 export type {
   PlayerState, InventoryItem, Relationship, GameContext, AppearanceState, PartSelection, Band

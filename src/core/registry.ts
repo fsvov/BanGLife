@@ -9,7 +9,8 @@ import type {
   Shop,
   Stage,
   StatDef,
-  Task
+  Task,
+  Trait
 } from './types'
 
 export class Registry<T extends { id: string }> {
@@ -60,4 +61,5 @@ export const registries = {
   tasks: new Registry<Task>(),
   strategies: new Registry<PerformanceStrategy>(),
   stages: new Registry<Stage>(),
+  traits: new Registry<Trait>(),
 }

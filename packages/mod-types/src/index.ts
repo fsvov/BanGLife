@@ -48,6 +48,14 @@ export interface PlayerState {
   appearance: AppearanceState
   band: Band
   liveBoost: number
+  traits: string[]
+}
+
+export interface Trait {
+  id: string
+  name: string
+  description: string
+  effects?: Effect[]
 }
 
 export interface InventoryItem {
@@ -319,6 +327,8 @@ export interface ModAPI {
   registerStrategy(strategy: PerformanceStrategy): void
 
   registerStage(stage: Stage): void
+
+  registerTrait(trait: Trait): void
 
   on(event: string, handler: (...args: unknown[]) => void): () => void
 

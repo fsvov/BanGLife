@@ -10,11 +10,13 @@ import {useUIStore} from '@/stores/ui'
 import {GAME_VERSION} from '@/stores/save-types'
 import {formatTime, getTimeInfo} from '@/core/time'
 import {MINUTES_PER_DAY} from '@/core/constants'
+import {registries} from '@/core/registry'
+import {applyEffects} from '@/core/effects'
 import InstallModal from '@/ui/components/modals/InstallModal.vue'
 import CharacterSprite from '@/ui/components/CharacterSprite.vue'
 import AppearancePicker from '@/ui/components/AppearancePicker.vue'
 import {DEFAULT_APPEARANCE, PARTS} from '@/stores/appearance'
-import type {AppearanceState} from '@/core/types'
+import type {AppearanceState, Effect, Trait} from '@/core/types'
 
 const router = useRouter()
 const player = usePlayerStore()
@@ -29,6 +31,22 @@ const tab = ref<'start' | 'saves' | 'mods'>('start')
 const playerName = ref('')
 const draftSchool = ref('school.haneoka')
 const draftAppearance = ref<AppearanceState>(JSON.parse(JSON.stringify(DEFAULT_APPEARANCE)))
+
+const allTraits = ref<Trait[]>([])
+const availableTraits = ref<Trait[]>([])
+const selectedTraits = ref<string[]>([])
+
+function toggleTrait(id: string) {
+  const idx = selectedTraits.value.indexOf(id)
+  if (idx >= 0) selectedTraits.value.splice(idx, 1)
+  else if (selectedTraits.value.length < 3) selectedTraits.value.push(id)
+}
+
+function refreshTraits() {
+  const shuffled = [...allTraits.value].sort(() => Math.random() - 0.5)
+  availableTraits.value = shuffled.slice(0, 5)
+  selectedTraits.value = []
+}
 
 const creationParts = computed(() => PARTS.filter(p => p.id === 'eyes' || p.id === 'hair'))
 
@@ -53,6 +71,8 @@ const base = import.meta.env.BASE_URL
 onMounted(async () => {
   await save.refresh()
   await mods.refresh()
+  allTraits.value = registries.traits.getAll()
+  refreshTraits()
 })
 
 const slots = computed(() =>
@@ -73,11 +93,18 @@ async function newGame() {
   player.state.name = playerName.value.trim()
   player.state.appearance = JSON.parse(JSON.stringify(draftAppearance.value))
   player.state.school = draftSchool.value
+  player.state.traits = [...selectedTraits.value]
+  const effects: Effect[] = []
+  for (const id of selectedTraits.value) {
+    const trait = registries.traits.get(id)
+    if (trait?.effects) effects.push(...trait.effects)
+  }
+  if (effects.length) applyEffects(effects)
   if (settings.settings.autoSave) {
     await save.autoSave()
     ui.showToast('已自动存档', 'success')
   }
-  router.push('/game')
+  await router.push('/game')
 }
 
 async function loadSlot(slot: number) {
@@ -164,6 +191,42 @@ async function onUrlInstall() {
                 @click="draftSchool = s.id"
               >
                 {{ s.name }}
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-xs font-semibold">特质</h3>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-muted">{{ selectedTraits.length }} / 3</span>
+                <button
+                  v-if="allTraits.length > 5"
+                  class="text-xs text-brand-pink hover:text-brand-purple transition-colors"
+                  @click="refreshTraits"
+                >
+                  刷新
+                </button>
+              </div>
+            </div>
+            <div v-if="availableTraits.length === 0" class="text-xs text-neutral-400 text-center py-3">
+              暂无可用特质
+            </div>
+            <div v-else class="flex flex-col gap-1.5">
+              <button
+                v-for="trait in availableTraits"
+                :key="trait.id"
+                :class="selectedTraits.includes(trait.id)
+                  ? 'border-brand-pink bg-pink-50'
+                  : 'border-neutral-200 hover:border-neutral-300'"
+                class="text-left p-2.5 rounded-xl border transition-colors"
+                @click="toggleTrait(trait.id)"
+              >
+                <span class="flex items-center justify-between mb-0.5">
+                  <span class="text-xs font-medium">{{ trait.name }}</span>
+                  <span v-if="selectedTraits.includes(trait.id)" class="text-xs text-brand-pink">✓</span>
+                </span>
+                <p class="text-xs text-muted leading-relaxed">{{ trait.description }}</p>
               </button>
             </div>
           </div>

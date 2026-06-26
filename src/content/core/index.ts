@@ -1,5 +1,5 @@
 import type {ModDefinition, ModManifest, PerformanceStrategy} from '@banglife/mod-types'
-import type {Action, GameLocation, Item, NPC, Passage, Shop, Stage, StatDef, Task} from '@/core/types'
+import type {Action, GameLocation, Item, NPC, Passage, Shop, Stage, StatDef, Task, Trait} from '@/core/types'
 import {GAME_VERSION} from '@/stores/save-types'
 import {schoolActions, schoolLocations, schoolPassages} from './locations/school.ts'
 import {homeActions, homeLocations, homePassages} from './locations/home.ts'
@@ -45,6 +45,7 @@ import {rana} from './npcs/rana.ts'
 import {soyo} from './npcs/soyo.ts'
 import {defaultStrategies} from './strategies/default.ts'
 import {defaultStages} from './stages/default.ts'
+import {defaultTraits} from './traits/default.ts'
 
 const manifest: ModManifest = {
   id: 'banglife.core',
@@ -213,6 +214,10 @@ const stages: Stage[] = [
   ...defaultStages,
 ]
 
+const traits: Trait[] = [
+  ...defaultTraits,
+]
+
 const definition: ModDefinition = {
   async onLoad(api) {
     for (const stat of stats) api.registerStat(stat)
@@ -225,6 +230,7 @@ const definition: ModDefinition = {
     for (const task of tasks) api.registerTask(task)
     for (const strategy of strategies) api.registerStrategy(strategy)
     for (const stage of stages) api.registerStage(stage)
+    for (const trait of traits) api.registerTrait(trait)
   },
 }
 

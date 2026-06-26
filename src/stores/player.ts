@@ -28,6 +28,7 @@ export const usePlayerStore = defineStore('player', () => {
       members: [],
     },
     liveBoost: 3,
+    traits: [],
   })
 
   const time = ref<number>(START_TIME)

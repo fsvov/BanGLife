@@ -14,6 +14,7 @@ import type {
   Stage,
   StatDef,
   Task,
+  Trait,
 } from '@banglife/mod-types'
 import type {GameContext} from '@/core/types'
 import type {Registry} from '@/core/registry'
@@ -95,6 +96,7 @@ export function createModAPI(manifest: ModManifest): ModAPI {
       registerTask: (task: Task) => reg('tasks', task),
       registerStrategy: (strategy: PerformanceStrategy) => reg('strategies', strategy),
       registerStage: (stage: Stage) => reg('stages', stage),
+      registerTrait: (trait: Trait) => reg('traits', trait),
 
       on(event: string, handler: (...args: unknown[]) => void) {
         const unsub = eventBus.on(event, handler)
